@@ -187,14 +187,12 @@ clicks: 3
 SWC 做為 Rollup 目前底層的編譯器。
 
 [click]
-- esbuild 是用 Go 寫的，效能比 JavaScript-based 的 bundler 快，
+- esbuild 是用 Go 寫的，效能快，
 但缺點是目前在 code-splitting、tree shaking、plugin 生態系這些功能的不齊全，在 production 打包時不能用。
-- 而 Rollup 的好處是有完整的 plugin 生態系，但跟 Webpack 一樣是 JavaScript-based，所以效能比不上其他靜態語言為基底的打包工具。
-- 而 SWC 有執行檔過大的問題，舉例在 macOS 上 SWC 的 binary 檔案有 37MB，幾乎是 Vite 本身的兩倍多
+- 而 Rollup 的好處是有完整的 plugin 生態系，但效能比不上其他靜態語言為基底的打包工具。
 - 因為現在 dev/production 分成 esbuild 與 Rollup 兩套，所以有時會有兩種環境行為不一致或像是模組轉換的問題。
 - 另外多套工具間的 build pipeline 中會有不少轉譯語言成本的浪費。
-- 而 Vite 在較複雜的巢狀依賴的專案中， pre-bundling 也有 request waterfall 的問題。
-- 為了解決以上這些問題，在 2023 年時 Vite 團隊原本與 Rspack 團隊決定一同開發 Rolldown 這套 Rust 寫的打包工具。想取代原本的 esbuild 與 Rollup。
+- 為了解決以上這些問題，在 2023 年時 Vite 團隊原本與 Rspack 團隊決定一同開發 Rolldown 這套 Rust 寫的打包工具。想取代原本底層使用的 esbuild 與 Rollup。
 - 但當團隊越鑽越深時，發現如果不一次做到好，底層的這些問題可能仍會歷史重演，JS 生態系的底層仍需要同時仰賴多套工具。
 因此今年決定把夢做大成立一間獨立的開源公司來把整套工具鏈做得更完善。
 -->
@@ -224,21 +222,21 @@ growOpacity: 0.6
 [click] 今天當我們用 React, Vue, Nuxt, Remix 等這些上層前端框架或 meta framework 時，
 現在都能夠以 Vite 作為建構工具。
 
-[click] 另外可以搭配能兼容 jest 的單元測試工具，Vitest，
-查了些資訊發現以前在 Vite 專案中要能使用 jest 時會遇到一些轉換與設定問題，
-因此後來 vue 核心團隊做了一個叫做 vite-jest 的工具。
-但為了能在設定時更方便能原生支援 ES module 與 TypeScript，
-且能與 Vite 更緊密整合，
-因此後來 Vite 核心團隊 (Antfu, Patak) 開發這套 Vitest。
+[click] 另外可以搭配能兼容 jest 的單元測試工具，Vitest。
 
-[click] 再來是 Rolldown 的部分，就是希望能利用 Rust 打造一個打包工具，
-來解決目前底層在 dev/production 用兩套 esbuild 與 Rollup 來打包的問題。
+以前在 Vite 專案中要能使用 jest 時會遇到一些轉換與設定問題，
+因此後來 vue 社群做了一個叫做 vite-jest 的工具。
+但為了能在設定時更方便與 Vite 整合，
+因此後來 Vite 核心團隊 (Antfu, Patak 等人) 開發這套 Vitest。
+
+[click] 再來是 Rolldown 的部分，就像前面提到的目前正在開發中。
+
+希望能利用 Rust 打造一個打包工具，
+來解決目前底層在 dev/production 用兩套打包工具的問題。
 就像另一套以 Rust 為基底打造的 Rspack 能兼容 Webpack 的方式一樣，
 或許未來能夠兼容所有的 bundler，如果在生態系接受度夠高的狀況下。
-而從國外社群的討論來看，有一說 Next.js 未來仍會持續以自產的 Turbopack 為方向，
-個人認為打包工具的統一可能還有很長一段路要走？
 
-[click] 最後是 Oxc。
+[click] 最後是 Oxc。這個工具大家可能相對更陌生，另外拉出來特別講一下。
 -->
 
 ---
@@ -266,8 +264,6 @@ growOpacity: 0.9
 <!-- <img v-click src="/oxc-progress.png" absolute right-8 top-33 rounded-xl w-60 /> -->
 
 <!--
-這個工具大家可能相對更陌生，另外拉出來特別講一下。
-
 [click] Oxc 是 Oxidation Compiler 的縮寫，
 這算是比較底層的編譯與解析語法的工具，
 Oxidation 這個字是氧化的意思，而 Rust 是生鏽的意思，
