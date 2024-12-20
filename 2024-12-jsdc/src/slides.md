@@ -31,8 +31,8 @@ growOpacity: 0.6
 Hi 大家好，很高興今天有機會來 JSDC 分享，然後這也是我第一次當講者，希望大家會喜歡。
 今天要分享的主題是《一起探索 VoidZero 為 JS 生態系準備的瑞士刀》。
 
-[click] 這把瑞士刀裡會包含 Vite、Vitest、Rolldown、Oxc 這些工具，
-接下來會帶大家快速了解一下，並做一些 Demo
+[click] 那這把瑞士刀裡會包含 Vite、Vitest、Rolldown、Oxc 這些工具，
+接下來就會帶大家了解一下，並做一些 Demo。
 -->
 
 ---
@@ -66,11 +66,11 @@ class: p-20
 <img src="/avatar.png" rounded-full w-40 abs-tr mt-32 mr-30 />
 
 <!--
-在開始前簡單做一下自我介绍！我是 CK，之前在幾間公司擔任過前端工程師。
+那先簡單做一下自我介绍！我是 CK，之前在幾間公司擔任前端工程師。
 這一年開始經營 codefarmer 這個部落格，
-今天的投影片過幾天整理下也會放到我的部落格上，
+今天的投影片過幾天整理後也會放到上面，
 如果大家對今天的主題有興趣或問題，
-都可以從部落格上找到各種聯絡資訊找我討論。
+都可以從部落格上找到各種聯絡資訊跟我討論。
 -->
 
 ---
@@ -95,22 +95,31 @@ growOpacity: 0.3
 
 <!--
 在最開始先快速帶過一些後面講解會需要知道的基本介紹。
+
 首先是 Build Tool 和 Bundler 的差別。
-中文也有人翻作「建構工具」或「打包工具」。
+中文也有人翻作「建構工具」跟「打包工具」。
 大家可以暫停兩三秒，想一下這兩者的差別是什麼？
 
 [click] 簡單說的話，當你今天想做一個網站，從在 local 開發到最後部署到雲端伺服器，
-這個開發過程中在處理網頁畫面的部分，背後會去用上這兩種工具。
-建構工具的部分可以理解為你在開發時下了 `npm run dev` 這樣的指令後，
-在 localhost 啟了一個 dev server 來協助你邊寫程式邊確認畫面。
-因為大家可能會用一些像是 typescript、css 預處理器這些語法來開發，
-而打包工具顧名思義它是在一切開發就緒後要部署時，
-協助將這些程式依照設定檔去分析、轉譯最後打包出瀏覽器能看懂的 HTML、CSS、JS 檔案。
+這個開發過程中在處理網頁畫面的部分，背後可能有機會去用上這兩種工具。
 
-[click] 從這張圖上可以看到這兩者對應的工具，像是以前比較常見的 Webpack 是打包工具，
-而對應的以前的 Create React App 或 Vue CLI 就是建構工具。
+建構工具的部分可以理解為你在開發時下了 `npm run dev` 這樣的指令後，
+會在 local 去啟一個 dev server 來協助你邊寫程式邊確認畫面。
+
+因為在開發過程中，可能會用一些像是 typescript、scss 這些語法來協助開發。
+
+等開發都完成後，要準備部署時，
+因為瀏覽器本身是不認得這些語法的，
+所以這時候就需要用「打包工具」去設定一些 loader 和 plugin，
+來將這些語法轉譯後，再去做 minify、uglify 等動作。
+最後打包出瀏覽器能看懂的 HTML、CSS、JS 檔案。
+
+[click] 從這張圖上可以看到這兩者對應的工具，像大家比較常聽到的 Webpack 是打包工具，
+而對應以前可能會有 Create React App 或 Vue CLI 或 webpack-dev-server 就是建構工具。
+
 而今天要介紹的 Vite，本體其實是建構工具，背後打包的工作目前是使用 Rollup。
-另外還有在今年剛正式釋出第一版的 Rspack，這套是由 ByteDance 的架構團隊所開發。
+
+另外還有在今年剛正式釋出第一版的 Rspack，這套是由 ByteDance 的 infra 團隊用 Rust 去開發，也有分成 Rsbuild 與 Rspack。
 -->
 
 ---
@@ -126,24 +135,68 @@ growOpacity: 0.3
 
 <div transition transition-600 text-xl font-semibold mt--10>
   <img v-click src="/void-zero-intro.png" w="3/4" absolute left-30 top-30 rounded-3xl />
-  <!-- <img v-click src="/roadmap.png" w="3/4" absolute left-30 top-28 rounded-3xl /> -->
+  <img v-click src="/roadmap.png" w="3/4" absolute left-30 top-33 rounded-3xl />
 </div>
-
-<!-- TODO: 備用：[click] 這張圖中是整個 VoidZero 的 roadmap。
-如果在網頁開發時會用到的各種框架與工具代表的最上層，
-那 VoidZero 這個開源生態系會提供一整套工具鏈，
-包含 Vite 作為建構工具，
-Vitest 作為單元測試工具，
-Rolldown 作為打包工具，
-而 Oxc 負責更底層像是 linter、formatter、解析、轉譯語法這些工作。 -->
 
 <!--
 再來講講 VoidZero 是什麼？
 
-[click] 這是一間由 Vue 及 Vite 作者尤雨溪在今年 ViteConf 時宣布成立的新公司，
-推薦大家對這個生態系有興趣可以再去看原本的議程，我會附在最後面參考資料中。
-這邊會快速帶過一些重點，避免變成英翻中版本的議程。
-先說說這個生態系包含了哪些工具。
+[click] VoidZero 是一間公司。
+它是由 Vue 跟 Vite 的作者尤雨溪先生，在今年 ViteConf 時宣布募資成立的新公司。
+
+[click] 那它的願景是希望能打造一個從建構工具的 Vite，
+單元測試框架的 Vitest，
+到打包工具的 Rolldown，
+再到底層編譯工具的 Oxc，
+一整個完整的開源工具鏈。
+
+我們先來簡單介紹一下 Vite。
+-->
+
+---
+layout: statement
+clicks: 3
+---
+
+<div transition transition-500
+  :class="$clicks > 0 && 'translate-y--50 scale-60 op80'">
+  <div transition transition-500 ease-in-out font-fast text-6 mb2 :class="$clicks > 0 ? 'op70' : 'op0'">What is Vite?</div>
+  <h1>什麼是 Vite？</h1>
+</div>
+
+<img :class="$clicks === 1 ? 'op100' : 'op0'" src="/esm-based.png" w="3/4" absolute left-30 top-30 rounded-3xl transition transition-500 />
+<img :class="$clicks === 2 || $clicks === 3 ? 'op100' : 'op0'" src="/vite-1.png" w="3/4" absolute left-30 top-31 rounded-3xl transition transition-500 />
+
+<!--
+就像前面提到的，Vite 是一個建構工具。
+
+[click] 如果你曾經有在開發時玩過 Vite，
+會發現比起過往用其他 bundled-based dev server，
+像是 webpack-dev-server 或 Vue CLI 的體驗快很多。
+
+這是因為他利用了瀏覽器原生支援 ES Module 的特性，
+來提升開發體驗。
+
+[click]
+再深入看到這張圖是 Vite 目前的架構。
+
+簡單說的話會由 esbuild 負責 local 開發時的 pre-bundling。
+
+由 Rollup 負責 production 打包。
+
+SWC 做為 Rollup 目前底層的編譯器。
+
+[click]
+- esbuild 是用 Go 寫的，效能比 JavaScript-based 的 bundler 快，
+但缺點是目前在 code-splitting、tree shaking、plugin 生態系這些功能的不齊全，在 production 打包時不能用。
+- 而 Rollup 的好處是有完整的 plugin 生態系，但跟 Webpack 一樣是 JavaScript-based，所以效能比不上其他靜態語言為基底的打包工具。
+- 而 SWC 有執行檔過大的問題，舉例在 macOS 上 SWC 的 binary 檔案有 37MB，幾乎是 Vite 本身的兩倍多
+- 因為現在 dev/production 分成 esbuild 與 Rollup 兩套，所以有時會有兩種環境行為不一致或像是模組轉換的問題。
+- 另外多套工具間的 build pipeline 中會有不少轉譯語言成本的浪費。
+- 而 Vite 在較複雜的巢狀依賴的專案中， pre-bundling 也有 request waterfall 的問題。
+- 為了解決以上這些問題，在 2023 年時 Vite 團隊原本與 Rspack 團隊決定一同開發 Rolldown 這套 Rust 寫的打包工具。想取代原本的 esbuild 與 Rollup。
+- 但當團隊越鑽越深時，發現如果不一次做到好，底層的這些問題可能仍會歷史重演，JS 生態系的底層仍需要同時仰賴多套工具。
+因此今年決定把夢做大成立一間獨立的開源公司來把整套工具鏈做得更完善。
 -->
 
 ---
@@ -166,11 +219,10 @@ growOpacity: 0.6
 </v-clicks>
 
 <!--
-接下來我們來看一下 VoidZero 生態系下各個工具鏈的細節。
+接下來看回這張圖在 VoidZero 生態系下其他工具鏈的細節。
 
-[click] 首先看到這張圖的話，今天當我們用 React, Vue, Nuxt, Remix 等這些上層前端框架或 meta framework 時，
-現在都能夠以 Vite 作為 local 開發時的建構工具，也就是 dev server，
-它能夠提供快速的冷啟動、HMR (Hot Module Replacement) 這些特色來提升開發體驗。
+[click] 今天當我們用 React, Vue, Nuxt, Remix 等這些上層前端框架或 meta framework 時，
+現在都能夠以 Vite 作為建構工具。
 
 [click] 另外可以搭配能兼容 jest 的單元測試工具，Vitest，
 查了些資訊發現以前在 Vite 專案中要能使用 jest 時會遇到一些轉換與設定問題，
