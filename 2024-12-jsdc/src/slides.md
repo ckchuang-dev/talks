@@ -150,12 +150,12 @@ growOpacity: 0.3
 再到底層編譯工具的 Oxc，
 一整個完整的開源工具鏈。
 
-我們先來簡單介紹一下 Vite。
+那為什麼會有這個想法呢，這邊就先來簡單介紹一下 Vite。
 -->
 
 ---
 layout: statement
-clicks: 3
+clicks: 4
 ---
 
 <div transition transition-500
@@ -165,36 +165,44 @@ clicks: 3
 </div>
 
 <img :class="$clicks === 1 ? 'op100' : 'op0'" src="/esm-based.png" w="3/4" absolute left-30 top-30 rounded-3xl transition transition-500 />
-<img :class="$clicks === 2 || $clicks === 3 ? 'op100' : 'op0'" src="/vite-1.png" w="3/4" absolute left-30 top-31 rounded-3xl transition transition-500 />
+<img :class="$clicks >= 2 && $clicks <= 4 ? 'op100' : 'op0'" src="/vite-1.png" w="3/4" absolute left-30 top-31 rounded-3xl transition transition-500 />
 
 <!--
 就像前面提到的，Vite 是一個建構工具。
 
-[click] 如果你曾經有在開發時玩過 Vite，
+[click] 如果你曾經有在開發一些前端專案時玩過 Vite，
 會發現比起過往用其他 bundled-based dev server，
-像是 webpack-dev-server 或 Vue CLI 的體驗快很多。
+像是 CRA 或 Vue CLI 的體驗快很多。
 
-這是因為他利用了瀏覽器原生支援 ES Module 的特性，
+其中一個主要原因是因為他利用了瀏覽器原生支援 ES Module 的特性，
 來提升開發體驗。
 
 [click]
 再深入看到這張圖是 Vite 目前的架構。
 
 簡單說的話會由 esbuild 負責 local 開發時的 pre-bundling。
+把專案中的依賴套件做預先打包與快取，
+可以解決像是 request waterfall、不同套件模組標準不同的問題。
 
-由 Rollup 負責 production 打包。
+而 Rollup 會負責 production 打包。
 
-SWC 做為 Rollup 目前底層的編譯器。
+SWC (Speedy Web Compiler) 做為 Rollup 目前底層的編譯器。
 
-[click]
+[click] 而會想要開發整套工具鏈的原因是因為一些問題：
 - esbuild 是用 Go 寫的，效能快，
 但缺點是目前在 code-splitting、tree shaking、plugin 生態系這些功能的不齊全，在 production 打包時不能用。
 - 而 Rollup 的好處是有完整的 plugin 生態系，但效能比不上其他靜態語言為基底的打包工具。
-- 因為現在 dev/production 分成 esbuild 與 Rollup 兩套，所以有時會有兩種環境行為不一致或像是模組轉換的問題。
+- 因為現在 dev/production 分成 esbuild 與 Rollup 兩套，所以有時會有兩種環境行為不一致或像是模組轉換的問題。造成 debug 不容易。
 - 另外多套工具間的 build pipeline 中會有不少轉譯語言成本的浪費。
-- 為了解決以上這些問題，在 2023 年時 Vite 團隊原本與 Rspack 團隊決定一同開發 Rolldown 這套 Rust 寫的打包工具。想取代原本底層使用的 esbuild 與 Rollup。
-- 但當團隊越鑽越深時，發現如果不一次做到好，底層的這些問題可能仍會歷史重演，JS 生態系的底層仍需要同時仰賴多套工具。
-因此今年決定把夢做大成立一間獨立的開源公司來把整套工具鏈做得更完善。
+
+[click] 為了解決以上這些問題，在去年時 Vite 團隊原本與 Rspack 團隊，
+決定一起開發 Rolldown 這套用 Rust 寫的打包工具。想換掉原本底層使用的 esbuild 與 Rollup。
+
+但當團隊越鑽越深時，發現如果不一次做到好，底層的這些多套工具交互的問題可能仍會重演，
+讓不同 JS 生態系的底層仍需要同時仰賴多套工具。
+因此決定把夢做大成立一間獨立的開源公司來把整套工具鏈做得更完善。
+
+因為這個過程就需要更多的開源開發者加入，也不能讓贊助資源只集中在某些人身上，所以成立公司來整合整個資源。
 -->
 
 ---
@@ -217,16 +225,17 @@ growOpacity: 0.6
 </v-clicks>
 
 <!--
-接下來看回這張圖在 VoidZero 生態系下其他工具鏈的細節。
+接下來講一下其他工具的細節。
 
-[click] 今天當我們用 React, Vue, Nuxt, Remix 等這些上層前端框架或 meta framework 時，
-現在都能夠以 Vite 作為建構工具。
+[click] 看回右邊這張圖。
+今天當我們用 React, Vue, Nuxt, Remix, Astro 等這些上層前端框架或 meta framework 時，
+現在預設都能夠以 Vite 作為建構工具。
 
-[click] 另外可以搭配能兼容 jest 的單元測試工具，Vitest。
+[click] 另外可以搭配能這個兼容 jest 的單元測試工具，Vitest。
 
-以前在 Vite 專案中要能使用 jest 時會遇到一些轉換與設定問題，
-因此後來 vue 社群做了一個叫做 vite-jest 的工具。
-但為了能在設定時更方便與 Vite 整合，
+以前如果在 Vite 專案中要能使用 jest 時，會遇到一些轉換與設定問題，
+所以後來 vue 的核心開發者 sodatea 幫忙做了一個叫做 vite-jest 的工具。
+後來為了能在設定時更方便去與 Vite 整合，
 因此後來 Vite 核心團隊 (Antfu, Patak 等人) 開發這套 Vitest。
 
 [click] 再來是 Rolldown 的部分，就像前面提到的目前正在開發中。
@@ -234,7 +243,8 @@ growOpacity: 0.6
 希望能利用 Rust 打造一個打包工具，
 來解決目前底層在 dev/production 用兩套打包工具的問題。
 就像另一套以 Rust 為基底打造的 Rspack 能兼容 Webpack 的方式一樣，
-或許未來能夠兼容所有的 bundler，如果在生態系接受度夠高的狀況下。
+或許未來有機會能夠兼容目前所有的 bundler，
+如果在生態系接受度夠高的狀況下。
 
 [click] 最後是 Oxc。這個工具大家可能相對更陌生，另外拉出來特別講一下。
 -->
@@ -265,20 +275,27 @@ growOpacity: 0.9
 
 <!--
 [click] Oxc 是 Oxidation Compiler 的縮寫，
-這算是比較底層的編譯與解析語法的工具，
+這算是一整套用 Rust 去寫的，比較底層的編譯與解析語法的工具。
+
 Oxidation 這個字是氧化的意思，而 Rust 是生鏽的意思，
-雖然沒有查到相關資料，但猜測是想表示把一些工具改成 Rust 的版本所以取這個名字。
+雖然沒查到相關資料，但猜測是想表示把一些工具改成 Rust 的版本，所以取這個名字。
 
 [click] 像是比較常見的 linter 的部分可以對應到原本的 eslint，
 formatter 的部分可以對應到常見的 prettier，
 transformer 主要是在處理語法轉譯，對應到大家可能聽過的 Babel、SWC、tsc。
 
+目前後面這三者都還在開發中，所以今天只會先試試看 linter 的部分。
+
 [click] 從上面這些比較，如果稍微了解過一些 Rust 的特性的話，
 會知道 Rust 因為提供更有彈性的記憶體管理系統，
 所以被應用在這些底層工具上能有效提升效能。
-可以理解為 Oxc 的目標想把以前的一些工具像是 Babel、ESLint、tsc、prettier 等，
-JS 開發工具鏈用 Rust 改寫來做一個效能提速，
-基本上跟另外一個 Biome 是同樣的目標，都是想以 Rust 來提升更低成本的工具進而降低機器成本與增加開發體驗。
+
+可以理解為 Oxc 的目標想把以前我們常用的一些工具像是 Babel、ESLint、tsc、prettier 等，
+用 Rust 改寫來做一個效能提速，
+但本質上並不是想取代這些工具，後面會提到。
+
+基本上跟另外一個叫做 Biome 的工具鏈是同樣的目標，
+Oxc 的文件上也有提到他也受到 Biome 跟 Python 生態系的 linter — Ruff 的啟發。
 -->
 
 ---
@@ -288,7 +305,8 @@ layout: statement
 # Demo
 
 <!--
-接下來我們來看一下要怎麼用這些工具。
+talk is cheap, show me the code.
+接下來我們簡單看一下要怎麼用這些工具。
 -->
 
 ---
@@ -363,11 +381,11 @@ afterEach(() => {
 </div>
 
 <!--
-首先先看到 vitest 基本設定檔的部分。
+先看到 vitest 基本設定檔的部分。
 
 [click] 首先你可以注意到，這裡直接將 vitest 的設定寫在 vite.config.ts 裡，
 或你想另外寫成獨立設定檔也可以，
-這裡的第一行是為了讓 TypeScript 能正確去解析 vitest 的設定型別。
+這裡的第 2 行是為了讓 TypeScript 能正確去解析 vitest 的設定型別。
 
 [click] 往下快速帶大家看幾個重要的設定，
 在 jest 中預設會開啟全域載入的設定，也就是你不需要在每個測試檔裡去載入那些 describe、expect 之類的函式。
@@ -632,7 +650,7 @@ growSeed: 1
 
 <div op80 font-smiley text-5>
 
-簡報目前已經分享在 <ri-github-fill /> [ckchuang-dev/talks](https://github.com/ckchuang-dev/talks) 上
+簡報目前已經分享在 <ri-github-fill /> [ckchuang-dev/talks](https://github.com/ckchuang-dev/talks) 與部落格上
 
 </div>
 
