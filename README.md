@@ -6,4 +6,7 @@ Special thanks to [Kevin Deng](https://github.com/sxzz) for the [talks](https://
 
 ###### 2024
 
-- `zh` [一起探索 VoidZero 為 JS 生態系準備的瑞士刀](./2024-12-jsdc/) - JSDC 2024 (2024-12-21)
+- `zh` - 一起探索 VoidZero 為 JS 生態系準備的瑞士刀
+  - [Conference - JSDC 2024](https://2024.jsdc.tw/)
+  - [Slidev](./2024-12-jsdc/)
+  - [Demo](https://talks.codefarmer.tw/2024-12-jsdc)

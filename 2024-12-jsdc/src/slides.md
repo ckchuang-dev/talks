@@ -632,7 +632,7 @@ growSeed: 1
 
 <div op80 font-smiley text-5>
 
-投影片過幾天會在 <ri-github-fill /> [ckchuang-dev/talks](https://github.com/ckchuang-dev/talks) 或部落格上釋出。
+簡報目前已經分享在 <ri-github-fill /> [ckchuang-dev/talks](https://github.com/ckchuang-dev/talks) 上
 
 </div>
 
@@ -640,14 +640,14 @@ growSeed: 1
   💖
   <span op70>感謝
     <a href="https://github.com/antfu" target="_blank">Kevin Deng</a>，
-    投影片主題參考自 <a href="https://github.com/sxzz/talks" target="_blank"> <ri-github-fill /> sxzz/talks</a>
+    簡報主題參考自 <a href="https://github.com/sxzz/talks" target="_blank"> <ri-github-fill /> sxzz/talks</a>
   </span>
 </div>
 <div font-smiley text-4>
   💖
   <span op70>感謝
     <a href="https://github.com/antfu" target="_blank">Anthony Fu</a>，
-    此投影片由 <img src="/slidev.svg" w-1em inline /> <a href="https://sli.dev/" target="_blank"> Slidev</a>
+    此簡報由 <img src="/slidev.svg" w-1em inline /> <a href="https://sli.dev/" target="_blank"> Slidev</a>
     製作
   </span>
 </div>
@@ -659,7 +659,8 @@ a {
 </style>
 
 <!--
-以上就是我今天的分享，投影片過幾天會在部落格上釋出，也特別感謝 Kevin、Anthony 在 slidev 工具與主題的開源。
+以上就是我今天的分享，簡報原始碼與 demo 連結目前已經放在這個 repo 與我的部落格上，
+也特別感謝 Kevin、Anthony 在 slidev 工具與主題的開源。
 -->
 
 ---
