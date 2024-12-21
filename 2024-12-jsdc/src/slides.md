@@ -388,7 +388,8 @@ afterEach(() => {
 這裡的第 2 行是為了讓 TypeScript 能正確去解析 vitest 的設定型別。
 
 [click] 往下快速帶大家看幾個重要的設定，
-在 jest 中預設會開啟全域載入的設定，也就是你不需要在每個測試檔裡去載入那些 describe、expect 之類的函式。
+在 jest 中預設會開啟全域載入的設定，
+也就是你不需要在每個單元測試檔裡去載入那些 describe、expect 之類的函式。
 想要在 Vitest 中達到一樣效果的話可以把這個設定打開。
 
 [click] 再來這個 environment 的部分。
@@ -409,6 +410,83 @@ afterEach(() => {
 
 ---
 transition: none
+grow: jest
+growOpacity: 0.1
+clicks: 3
+---
+
+<h1>Vitest Demo <sup text-5 op60 font-fast>testcase</sup></h1>
+
+<div mt-10>
+
+````md magic-move {lines: true, at:1}
+```ts {all|5-11,13,15,19,20-21}
+// sleep.test.ts
+import sleep from './sleep';
+
+describe('sleep', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  test('should await with sleep function using await', async () => {
+    const sleepPromise = sleep(3000);
+    jest.advanceTimersByTime(3000);
+    await sleepPromise;
+
+    // Verify all timers are complete
+    expect(jest.getTimerCount()).toBe(0);
+  });
+});
+```
+
+```ts {5-11,13,15,19,20-21}
+// sleep.test.ts
+import sleep from './sleep';
+
+describe('sleep', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test('should await with sleep function using await', async () => {
+    const sleepPromise = sleep(3000);
+    vi.advanceTimersByTime(3000);
+    await sleepPromise;
+
+    // Verify all timers are complete
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
+```
+````
+
+</div>
+
+<!--
+再來簡單看一個單元測試的範例。
+
+像圖上這段關於 sleep 這個函式的單元測試，假如原本是用 jest 去實作的話會長這樣。
+
+[click] 這裡可以看到有用上像是 useFakeTimers、advanceTimersByTime 這些用來模擬時間的函式。
+
+[click] 如果今天要改成 Vitest 的話，
+只有一些像是 mock function 或模擬時間部分要從 jest 改成 vi 這樣。
+
+[click] 主要的 beforeEach、afterEach、describe、expect 這些方法都有兼容。
+所以在做 jest 到 Vitest 的 migration 時會蠻方便的。
+-->
+
+---
+transition: none
 layout: two-cols
 growSeed: right
 growOpacity: 0.6
@@ -419,6 +497,8 @@ growOpacity: 0.6
 <div mt-10>
 
 ```json
+// package.json
+// ... 略 ...
 "scripts": {
   "test": "vitest run",
   "test:watch": "vitest",
