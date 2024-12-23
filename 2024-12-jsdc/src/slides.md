@@ -737,7 +737,7 @@ growSeed: 1
 <div font-smiley text-4>
   💖
   <span op70>感謝
-    <a href="https://github.com/antfu" target="_blank">Kevin Deng</a>，
+    <a href="https://github.com/sxzz" target="_blank">Kevin Deng</a>，
     簡報主題參考自 <a href="https://github.com/sxzz/talks" target="_blank"> <ri-github-fill /> sxzz/talks</a>
   </span>
 </div>
